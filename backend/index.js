@@ -58,35 +58,14 @@ const conditionASTs = conditions.map(condition => {
 const combinedAST = combineASTs(conditionASTs);
 console.log('Combined AST:', combinedAST);
 
-// Function to evaluate the data against the combined AST
-const evaluateAST = (ast, data) => {
-    try {
-        // Create a function that evaluates the AST with the provided data
-        const conditionFunction = new Function('data', `
-            const { salary, branch, exp, age } = data; // Destructure data properties
-            return ${generator(ast).code};
-        `);
-        // Execute the function and return the result
-        return conditionFunction(data);
-    } catch (error) {
-        console.error(`Error evaluating AST:`, error.message);
-        return false;
-    }
-};
 
-// Sample data to validate
-const sampleData = {
-    salary: 3000,
-    branch: "sales",
-    exp: 18,
-    age: 25 // Include age to avoid undefined errors
-};
 
-// Validate the sample data against the combined AST
-const isValid = evaluateAST(combinedAST, sampleData);
-console.log(`Is the sample data valid? ${isValid}`); // Should output true if any condition is satisfied
 
 // Start the server
+const CheckRoutes=require('./routes/check');
+const CreateRoutes=require('./routes/add_rule');
+app.use('/check',CheckRoutes);
+app.use('/add_rule',CreateRoutes);
 app.listen(8080, (error) => {
     if (error) {
         console.error("Error in setting up the server:", error);
