@@ -64,8 +64,10 @@ console.log('Combined AST:', combinedAST);
 // Start the server
 const CheckRoutes=require('./routes/check');
 const CreateRoutes=require('./routes/add_rule');
+const DeleteRoutes=require('./routes/delete');
 app.use('/check',CheckRoutes);
 app.use('/add_rule',CreateRoutes);
+app.use('/delete',DeleteRoutes);
 app.listen(8080, (error) => {
     if (error) {
         console.error("Error in setting up the server:", error);

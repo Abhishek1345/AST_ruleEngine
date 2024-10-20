@@ -3,7 +3,7 @@ const traverse = require('@babel/traverse').default;
 const types = require('@babel/types');
 const generator = require('@babel/generator').default; // Import generator
 const conditions = [
-    '(salary < 25 && branch === "sales") && (exp > 4)',
+    "(salary < 25 && branch === 'sales') && (exp > 4)",
     '(salary < 25000 && branch === "sales") && (exp > 10)',
     '(salary < 30000 && branch === "hr") && (exp < 5)',
     '(salary > 20000 && branch === "marketing") && (age > 25)',
@@ -31,15 +31,7 @@ const evaluateAST = (ast, data) => {
     }
 };
 // Parse conditions into ASTs
-const conditionASTs = conditions.map(condition => {
-    try {
-        const parsed = parser.parseExpression(condition);
-        return parsed;
-    } catch (error) {
-        console.error(`Error parsing condition "${condition}":`, error.message);
-        return null;
-    }
-}).filter(ast => ast !== null);
+
 const AddRule=async(req,res)=>{
     let data="";
     req.on("data",(dt)=>{
@@ -49,6 +41,15 @@ const AddRule=async(req,res)=>{
         data=JSON.parse(data);
         const newExpression=data.expression;
         conditions.push(newExpression);
+        const conditionASTs = conditions.map(condition => {
+            try {
+                const parsed = parser.parseExpression(condition);
+                return parsed;
+            } catch (error) {
+                console.error(`Error parsing condition "${condition}":`, error.message);
+                return null;
+            }
+        }).filter(ast => ast !== null);
         const combinedAST = combineASTs(conditionASTs);
         const isValid=evaluateAST(combinedAST,{
             salary:15,
