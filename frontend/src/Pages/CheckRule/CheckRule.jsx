@@ -1,30 +1,88 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
+
 function CheckRule() {
-  const [details, setDetails] = useState('');
-  const [output, setOutput] = useState('');
+  const [salary, setSalary] = useState(''); // For storing salary input
+  const [age, setAge] = useState(''); // For storing age input
+  const [experience, setExperience] = useState(''); // For storing experience input
+  const [branch, setBranch] = useState(''); // For storing branch input
+  const [output, setOutput] = useState(''); // For displaying response
 
-  const handleChange = (e) => {
-    setDetails(e.target.value);
-  };
-
-  const handleSubmit = (e) => {
+  // Handle form submission and send POST request
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Example output logic (modify as needed)
-    setOutput(`You entered: ${details}`);
+
+    // Create a JSON object with the form values
+    const checksData = {
+      checks: {
+        salary: salary,
+        age: age,
+        exp: experience,
+        branch: branch,
+      },
+    };
+
+    try {
+      // Send POST request to localhost:8080/check
+      const response = await fetch('http://localhost:8080/check', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(checksData),
+      });
+
+      // Handle response from the server
+      if (response.ok) {
+        const jsonResponse = await response.json();
+        setOutput(`Response: ${JSON.stringify(jsonResponse)}`);
+      } else {
+        setOutput('Error: Failed to check rule. Please try again.');
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      setOutput('Error: Server issue or invalid request.');
+    }
   };
 
   return (
     <div style={styles.container}>
       <h1 style={styles.animatedHeading}>Check Your Validity...</h1>
       <form onSubmit={handleSubmit} style={styles.form}>
-        <input 
-          type="text" 
-          value={details} 
-          onChange={handleChange} 
-          placeholder="Enter your details" 
-          required 
+        {/* Salary input */}
+        <input
+          type="number"
+          value={salary}
+          onChange={(e) => setSalary(e.target.value)}
+          placeholder="Enter your salary"
+          required
+          style={styles.input}
+        />
+        {/* Age input */}
+        <input
+          type="number"
+          value={age}
+          onChange={(e) => setAge(e.target.value)}
+          placeholder="Enter your age"
+          required
+          style={styles.input}
+        />
+        {/* Experience input */}
+        <input
+          type="number"
+          value={experience}
+          onChange={(e) => setExperience(e.target.value)}
+          placeholder="Enter your experience (in years)"
+          required
+          style={styles.input}
+        />
+        {/* Branch input */}
+        <input
+          type="text"
+          value={branch}
+          onChange={(e) => setBranch(e.target.value)}
+          placeholder="Enter your branch"
+          required
           style={styles.input}
         />
         <button type="submit" style={styles.button}>Submit</button>
@@ -34,7 +92,6 @@ function CheckRule() {
         {output}
       </div>
     </div>
-    
   );
 }
 
@@ -65,12 +122,15 @@ const styles = {
     padding: '10px',
     fontSize: '1em',
     width: '300px',
-    marginRight: '10px',
+    marginBottom: '10px',
+    display: 'block',
+    margin: '10px auto',
   },
   button: {
     padding: '10px 15px',
     fontSize: '1em',
     cursor: 'pointer',
+    marginTop: '10px',
   },
   outputSpace: {
     marginTop: '20px',
