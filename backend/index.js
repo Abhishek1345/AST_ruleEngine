@@ -65,7 +65,7 @@ console.log('Combined AST:', combinedAST);
 const CheckRoutes=require('./routes/check');
 const CreateRoutes=require('./routes/add_rule');
 const DeleteRoutes=require('./routes/delete');
-
+const getRoutes=require('./routes/get');
 
 app.use('/check',CheckRoutes);
 
@@ -73,6 +73,7 @@ app.use('/add_rule',CreateRoutes);
 
 app.use('/delete',DeleteRoutes);
 
+app.use('/get_rules',getRoutes)
 
 
 
